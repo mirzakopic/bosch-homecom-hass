@@ -18,6 +18,12 @@ This is a Home Assistant custom integration for Bosch HomeCom Easy enabled appli
 # Run all tests with coverage
 pytest --cov=custom_components --cov-report=term-missing tests
 
+# Run a single test file
+pytest tests/test_config_flow.py
+
+# Run a specific test function
+pytest tests/test_config_flow.py::test_function_name
+
 # Run tests using tox
 tox -e py312
 ```
@@ -69,6 +75,16 @@ Authentication uses SingleKey ID OAuth-like flow:
 2. User manually obtains authorization code from browser (see README for detailed steps due to CAPTCHA)
 3. Integration exchanges code for access token and refresh token via `homecom_alt.HomeComAlt.create()`
 4. Tokens are stored in config entry and automatically refreshed by coordinators
+
+**Config Flow Steps**:
+- `async_step_user`: Collects username
+- `async_step_browser`: Accepts authorization code from user
+- `async_step_devices`: Allows user to select which devices to set up
+- `async_step_reauth`: Handles reauthentication when tokens expire
+
+**Options Flow**: Users can configure the update interval (15-3600 seconds) via `BoschHomeComOptionsFlowHandler`. Changes are applied dynamically via update listener.
+
+**Reconfigure Flow**: Allows users to add/remove devices without re-authenticating.
 
 **Token Management**: Only one coordinator per entry is designated as `auth_provider=True` to handle token refresh. Other coordinators reuse tokens from the config entry to avoid concurrent refresh issues.
 
@@ -139,6 +155,12 @@ A single config entry can manage multiple devices. Each device gets its own coor
 
 ### Device Registry Integration
 Each coordinator creates a device in Home Assistant's device registry with manufacturer="Bosch", model based on device type (see `const.MODEL`), and firmware version.
+
+### Diagnostics Support
+The integration provides diagnostics via `diagnostics.py` which exports:
+- Device information, firmware versions, notifications
+- RAC-specific data: standard_functions, advanced_functions, switch_programs
+- Sensitive data (username, password) is automatically redacted
 
 ## Testing Patterns
 

@@ -51,6 +51,48 @@ tox -e type
 mypy custom_components tests
 ```
 
+### Local Development Setup
+
+**Quick Start (One Command):**
+```bash
+# Set up and run Home Assistant locally with the integration
+./dev_setup.sh   # First time setup
+./dev_run.sh     # Start Home Assistant (runs setup if needed)
+```
+
+**What the setup does:**
+1. Creates a Python virtual environment
+2. Installs Home Assistant and dependencies
+3. Sets up a `dev_config/` directory with the integration symlinked
+4. Creates a development `configuration.yaml` with debug logging
+5. Starts Home Assistant on `http://localhost:8123`
+
+**Configuration:**
+- Copy `.env.example` to `.env` to customize settings (port, log levels, etc.)
+- Default settings work out of the box
+- Config directory: `./dev_config/` (gitignored)
+
+**Authentication Flow for Local Development:**
+1. Start Home Assistant: `./dev_run.sh`
+2. Open `http://localhost:8123` and complete onboarding
+3. Go to Settings → Devices & Services → Add Integration
+4. Search for "Bosch HomeCom"
+5. Follow the authentication steps in README to get the authorization code
+6. Paste the code when prompted
+
+**Development Cycle:**
+```bash
+# Make changes to code
+# Restart Home Assistant (Ctrl+C and ./dev_run.sh)
+# Or use Developer Tools → Restart in the UI
+# Test your changes
+```
+
+**Logs:**
+- Console output shows debug logs
+- Also available in `dev_config/home-assistant.log`
+- View in UI: Settings → System → Logs
+
 ## Architecture
 
 ### Core Components
